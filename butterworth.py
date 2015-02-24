@@ -83,4 +83,4 @@ if __name__ == "__main__":
     plt.axis('tight')
     plt.legend(loc='upper left')
 
-    #plt.show()
+    plt.show()

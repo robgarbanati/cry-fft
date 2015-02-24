@@ -2,6 +2,7 @@ import scipy.io.wavfile
 import time
 import numpy as np
 import matplotlib.pyplot as plt
+import pylab
 
 sound_tup = scipy.io.wavfile.read('/mnt/hgfs/vmware_share/Unacuna Cry Analyzer Tests/short rohan.wav', 'r')
 #sound_tup = scipy.io.wavfile.read('/mnt/hgfs/vmware_share/modded baby sound effect.wav', 'r')
@@ -31,12 +32,15 @@ nyquist_freq = sample_freq / 2
 
 i = 0
 while i < len(sound_data):
-    sound_data_snippet = sound_data[snippet_length*i:snippet_length*(i+1)]
-    fft_of_sound = fft(sound_data_snippet)
+    sound_data_snippet = sound_data[i:i+snippet_length]
 
     wf = np.linspace(0, nyquist_freq, num_samples/2)
     plt.cla()
-    plt.axis([0, nyquist_freq, 0, max(sound_data_snippet)])
+    #plt.axis([0, nyquist_freq, 0, max(sound_data_snippet)])
+    #plt.axis([0, 12000, 0, max(sound_data_snippet)])
+    #plt.axis([1000, 5000, 0, max(sound_data_snippet)])
+    #pylab.figure(figsize=(12,9))
+    pylab.xlim([0,8000])
     try:
         plt.semilogy(wf[1:num_samples/2], 2.0/num_samples * np.abs(fft_of_sound[1:num_samples/2]))
     except ValueError:
@@ -48,19 +52,19 @@ while i < len(sound_data):
     plt.grid()
     #plt.show()
     #time.sleep(0.05)
-    i = i+1
+    i = i+1600
     print i
 
 
-plt.axis([0, 1000, 0, 1])
-plt.ion()
-plt.show()
+#plt.axis([0, 1000, 0, 1])
+#plt.ion()
+#plt.show()
 
-for i in range(1000):
-    y = np.random.random()
-    plt.cla()
-    plt.scatter(i, y)
-    plt.axis([0, 1000, 0, 1])
-    plt.draw()
-    time.sleep(0.05)
+#for i in range(1000):
+    #y = np.random.random()
+    #plt.cla()
+    #plt.scatter(i, y)
+    #plt.axis([0, 1000, 0, 1])
+    #plt.draw()
+    #time.sleep(0.05)
 
