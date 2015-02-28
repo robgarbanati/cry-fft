@@ -60,7 +60,9 @@ def makegraph(data, filename):
 def ellip_bandpass_filter(data):
     bgain = 100000000
     again = 100000000
-    b,a = iirdesign(wp = [0.2, 0.225], ws= [0.19, 0.23], gstop= 50, gpass=6, ftype='ellip') # 8000 hz version
+    #b,a = iirdesign(wp = [0.2, 0.225], ws= [0.19, 0.23], gstop= 50, gpass=6, ftype='ellip') # 8000 hz version
+    b,a = iirdesign(wp = [0.25, 0.75], ws= [0.23, 0.77], gstop= 50, gpass=6, ftype='ellip') # 8000 hz version
+    #b,a = iirdesign(wp = [0.61, 0.67], ws= [0.63, 0.65], gstop= 50, gpass=6, ftype='ellip') # notch
     for i,number in enumerate(b):
 	if abs(number) < 1e-15:
 	    b[i] = 0
@@ -73,6 +75,18 @@ def ellip_bandpass_filter(data):
 	else:
 	    #a[i] = round(number,8)
 	    a[i] = int(number*again)
+    print 'int64_t a[] = ',
+    print '{',
+    for num in a:
+        print '%.0f,' % num,
+    print '\b\b };'
+    print 'int64_t b[] = ',
+    print '{',
+    for num in b:
+        print('%.0f,' % num),
+    print '\b\b };'
+    print len(a)
+    print len(b)
     #y = lfilter(b, a, data)
     #return y
     y = robs_lfilter(b, a, data)
@@ -172,10 +186,10 @@ for i in samples_of_interest:
 	#plt.figure(i)
 	pylab.figure(figsize=(12,9))
 	#plt.plot(sound_data_snippet)
-	#plt.plot(filtered_snippet)
+	plt.plot(filtered_snippet)
 	#pylab.figure(figsize=(12,9))
-	plt.semilogy(wf[1:num_samples/2], 2.0/num_samples * np.abs(fft_of_sound[1:num_samples/2]))
-	plt.semilogy(wf[1:num_samples/2], 2.0/num_samples * np.abs(fft_of_filtered_sound[1:num_samples/2]))
+	#plt.semilogy(wf[1:num_samples/2], 2.0/num_samples * np.abs(fft_of_sound[1:num_samples/2]))
+	#plt.semilogy(wf[1:num_samples/2], 2.0/num_samples * np.abs(fft_of_filtered_sound[1:num_samples/2]))
 	#plt.semilogy(wf[1:num_samples/2], 2.0/num_samples * np.abs(fft_of_FIR_filtered_sound[1:num_samples/2]))
     except ValueError:
 	print "not plotting because data is all zeroes"
