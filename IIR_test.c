@@ -48,7 +48,7 @@ void free_array(Samples *a)
 
 void elliptic_filter(int16_t* x, int64_t* y)
 {
-    int64_t b[] =   { 
+    int64_t b[] =   {
 		    56980, -356994, 1009062, -1587860, 1293510,
 		    0, -1293510, 1587860, -1009062, 356994, -56980
 		    };
@@ -159,7 +159,7 @@ void init_x(int16_t* x)
 	    puts("size mismatch");
 	}
     }
-     
+
     fclose(data_fd);
 }
 
