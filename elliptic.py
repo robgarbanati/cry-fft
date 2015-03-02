@@ -99,14 +99,14 @@ a = [0.1, 0.2, 0.3, 0.4]
 for i,num in enumerate(a[1:]):
     print i
 
-##b,a = signal.iirdesign(wp = [0.15, 0.3], ws= [0.1, 0.35], gstop= 40, gpass=6, ftype='ellip')
+b,a = signal.iirdesign(wp = [0.15, 0.3], ws= [0.1, 0.35], gstop= 40, gpass=6, ftype='ellip')
 #b,a = signal.iirdesign(wp = [0.036, 0.041], ws= [0.031, 0.046], gstop= 50, gpass=6, ftype='ellip')
 #print 'b'
 #print b
 #print 'a'
 #print a
 
-#mfreqz(b,a)
+mfreqz(b,a)
 
 #figure(2)
 

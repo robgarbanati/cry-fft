@@ -44,7 +44,7 @@ def elliptic_bandpass_filter(data, lowcut, highcut, fs, order=5):
     y = lfilter(b, a, data)
     return y
 
-data = np.genfromtxt('data.txt', delimiter=', ', names=True, skiprows=2)
+data = np.genfromtxt('data.txt', delimiter=', ', names=True, skiprows=5)
 list_data = [list(row) for row in data]
 matt = np.mat(list_data)
 
@@ -53,12 +53,12 @@ array_matt1 = np.array(matt[:,1])
 data_2d_list = []
 fft_2d_list = []
 
-num_columns = 5
+num_columns = 4
 
 num_samples = len(array_matt1)
 
-sample_freq = 8000
-#sample_freq = 44100
+#sample_freq = 8000
+sample_freq = 44100
 nyquist_freq = sample_freq / 2
 
 #plt.figure(1)
@@ -75,43 +75,44 @@ for j in range(0,num_columns,1):
     fft_temp_list = fft(data_2d_list[j])
     for i,element in enumerate(fft_temp_list):
         fft_2d_list[j].append(element)
-    #if j != 0:
-	#plt.plot(data_2d_list[j], label = str(j))
-	#if j != 5:
-	    #plt.plot(data_2d_list[j], label = str(j))
-	    #plt.semilogy(wf, 2.0/num_samples * np.abs(fft_2d_list[j][0:num_samples/2]), label = str(j))
+    if j != 0:
+        #plt.plot(data_2d_list[j], label = str(j))
+        #plt.semilogy(wf, 2.0/num_samples * np.abs(fft_2d_list[j][0:num_samples/2]), label = str(j))
+    #if j in [1,2,3]:
+        #plt.plot(data_2d_list[j], label = str(j))
+        plt.semilogy(wf, 2.0/num_samples * np.abs(fft_2d_list[j][0:num_samples/2]), label = str(j))
 
 #pylab.figure(figsize=(12,12))
 #ax1 = pylab.subplot(2,2,1)
-#ax1.set_title('Original Audio')
+#ax1.set_title('original audio')
 #for j in [1,2]:
     #plt.plot(data_2d_list[j], label = str(j))
 
 #ax2 = pylab.subplot(2,2,2)
-#ax2.set_title('Unmoved Fitered Audio')
+#ax2.set_title('unmoved fitered audio')
 #for j in [3,4]:
     #plt.plot(data_2d_list[j], label = str(j))
 
 #ax3 = pylab.subplot(2,2,3)
-#ax3.set_title('Correct Phase Shift')
+#ax3.set_title('correct phase shift')
 #for j in [3,5]:
     #plt.plot(data_2d_list[j], label = str(j))
 
 #ax4 = pylab.subplot(2,2,4)
-#ax4.set_title('Filtered Phase Shift')
+#ax4.set_title('filtered phase shift')
 #for j in [3,6]:
     #plt.plot(data_2d_list[j], label = str(j))
 
 
-pylab.figure(figsize=(12,12))
-ax1 = pylab.subplot(2,1,1)
-ax1.set_title('Original Audio')
-plt.plot(data_2d_list[3], label = str(j))
-#plt.plot(data_2d_list[5], label = str(j))
+#pylab.figure(figsize=(12,12))
+#ax1 = pylab.subplot(2,1,1)
+#ax1.set_title('Original Audio')
+#plt.plot(data_2d_list[3], label = str(j))
+##plt.plot(data_2d_list[5], label = str(j))
 
-ax2 = pylab.subplot(2,1,2)
-ax2.set_title('Unmoved Fitered Audio')
-plt.plot(data_2d_list[4], label = str(j))
+#ax2 = pylab.subplot(2,1,2)
+#ax2.set_title('Unmoved Fitered Audio')
+#plt.plot(data_2d_list[4], label = str(j))
 
 
 summer = 0

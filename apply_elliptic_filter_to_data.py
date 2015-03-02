@@ -1,4 +1,3 @@
-import scipy.io.wavfile
 import time
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,35 +6,6 @@ from scipy.signal import butter, lfilter, iirdesign
 from pylab import *
 import scipy.signal as signal
 from scipy.fftpack import fft, ifft
-
-def FIR_bandpass_filter(data, lowcut, highcut):
-    d = initialize_FIR_BP_filter(lowcut)
-    print 'd'
-    print d
-    y = scipy.signal.convolve(data, d)
-    #print 'FIRy'
-    #print y
-    return y
-
-def initialize_FIR_BP_filter(lowcut):
-    n = 1280
-    #Lowpass filter
-    a = signal.firwin(n, cutoff = lowcut, window = ('kaiser', 1.0))
-    for i,number in enumerate(a):
-	if abs(number) < 1e-15:
-	    a[i] = 0
-
-    ##Highpass filter with spectral inversion
-    #b = - signal.firwin(n, cutoff = 0.225, window = ('kaiser', 1.0)); b[n/2] = b[n/2] + 1
-    #for i,number in enumerate(b):
-	#if abs(number) < 1e-15:
-	    #b[i] = 0
-
-    #FIR_filt = - (a+b); FIR_filt[n/2] = FIR_filt[n/2] + 1
-    #print 'FIR_filt'
-    #print FIR_filt
-    #return FIR_filt
-    return a
 
 def robs_lfilter(b, a, x):
     max_asum = 0
@@ -75,13 +45,12 @@ def robs_lfilter(b, a, x):
     print 'max %g %g' % (max_asum, max_bsum)
     return y
 
-#a[0]*y[n] = b[0]*x[n] + b[1]*x[n-1] + ... + b[nb]*x[n-nb]
-                        #- a[1]*y[n-1] - ... - a[na]*y[n-na]
+#def ellip_bandpass_filter(data):
+    #b,a = iirdesign(wp = 0.046, ws= 0.055, gstop= 50, gpass=6, ftype='ellip') # 44100 hz version
+    ##y = robs_lfilter(b, a, data)
+    #y = lfilter(b, a, data)
+    #return y
 
-def makegraph(data, filename):
-    plt.clf()
-    plt.plot(data)
-    plt.savefig(filename)
 
 def ellip_bandpass_filter(data):
     #print data
@@ -89,10 +58,9 @@ def ellip_bandpass_filter(data):
     bgain = 100000000
     again = 100000000
     #b,a = iirdesign(wp = [0.2, 0.225], ws= [0.19, 0.23], gstop= 50, gpass=6, ftype='ellip') # 8000 hz version
-    b,a = iirdesign(wp = [0.075, 0.15], ws= [0.065, 0.025], gstop= 50, gpass=6, ftype='ellip') # 8000 hz version
+    #b,a = iirdesign(wp = [0.25, 0.75], ws= [0.23, 0.77], gstop= 50, gpass=6, ftype='ellip') # 8000 hz version
     #b,a = iirdesign(wp = 0.25, ws= 0.30, gstop= 50, gpass=6, ftype='ellip') # 8000 hz version
-    #b,a = iirdesign(wp = 0.046, ws= 0.055, gstop= 50, gpass=6, ftype='ellip') # 44100 hz version
-    #b,a = iirdesign(wp = 0.033, ws= 0.041, gstop= 50, gpass=6, ftype='ellip') # 44100 hz version
+    b,a = iirdesign(wp = 0.046, ws= 0.055, gstop= 50, gpass=6, ftype='ellip') # 44100 hz version
     #b,a = iirdesign(wp = [0.61, 0.67], ws= [0.63, 0.65], gstop= 50, gpass=6, ftype='ellip') # notch
     for i,number in enumerate(b):
 	if abs(number) < 1e-15:
@@ -107,89 +75,109 @@ def ellip_bandpass_filter(data):
     print 'int64_t a[] = ',
     print '{',
     for num in a:
-        print '%g,' % num,
+        print '%.0f,' % num,
     print '\b\b };'
     print 'int64_t b[] = ',
     print '{',
     for num in b:
-        print('%g,' % num),
+        print('%.0f,' % num),
     print '\b\b };'
     print len(a)
     print len(b)
     y = robs_lfilter(b, a, data)
+    #y = lfilter(b, a, data)
     #for i,num in enumerate(y):
 	#y[i] = y[i]/100000000
 	#y[i] = y[i]
     return y
 
-def butter_bandpass(lowcut, highcut, fs, order=5):
-    nyq = 0.5 * fs
-    low = lowcut / nyq
-    high = highcut / nyq
-    b, a = butter(order, [low, high], btype='band')
-    return b, a
 
-def butter_lowpass(lowcut, order=5):
-    b, a = butter(order, lowcut, btype='low')
-    return b, a
+#pylab.figure(figsize=(12,9))
+#data = np.genfromtxt('workdocuments/data.txt', delimiter=', ', names=True, skiprows=3)
+#list_data = [list(row) for row in data]
+#matt = np.mat(list_data)
 
-def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
-    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = lfilter(b, a, data)
-    return y
+#list_data = []
+#for i,row in enumerate(matt[:,1]):
+    #for element in row:
+	#list_data.append(int64(element*100000000))
 
-def butter_lowpass_filter(data, lowcut, order=5):
-    b, a = butter_lowpass(lowcut, order=order)
-    y = lfilter(b, a, data)
-    return y
+#print 'list_data'
+#print list_data
+#summer = 0
+#for i,row in enumerate(list_data):
+    #summer += row
+#average = summer/len(list_data)
+#print 'average'
+#print average
+#for i,row in enumerate(list_data):
+    #list_data[i] -= average
+
+#filtered_data = ellip_bandpass_filter(list_data)
+
+#fft_data = fft(list_data)
+#fft_filtered_data = fft(filtered_data)
+
+#num_samples = len(list_data)
+#print 'num_samples'
+#print num_samples
+#sample_freq = 44100
+#nyquist_freq = sample_freq / 2
+
+#wf = np.linspace(0.0, nyquist_freq, num_samples/2)
+##plt.plot(list_data)
+##plt.plot(filtered_data)
+#plt.semilogy(wf, 2.0/num_samples * np.abs(fft_data[0:num_samples/2]), label = 'list_data')
+#plt.semilogy(wf, 2.0/num_samples * np.abs(fft_filtered_data[0:num_samples/2]), label = 'fft_data')
 
 
-
-data = np.genfromtxt('workdocuments/data.txt', delimiter=', ', names=True, skiprows=5)
+# dynamic version
+data = np.genfromtxt('workdocuments/data.txt', delimiter=', ', names=True, skiprows=3)
 list_data = [list(row) for row in data]
 matt = np.mat(list_data)
-
-array_matt1 = np.array(matt[:,1])
 
 data_2d_list = []
 fft_2d_list = []
 
-num_columns = 5
+num_columns = 2
 
-num_samples = len(array_matt1)
+num_samples = len(matt)
+print 'num_samples'
+print num_samples
 
-#sample_freq = 8000
-sample_freq = 45714
+sample_freq = 44100
 nyquist_freq = sample_freq / 2
 
 wf = np.linspace(0.0, nyquist_freq, num_samples/2)
 for j in range(0,num_columns,1):
+    summer = 0
     #if j not in data_2d_list:
     data_2d_list.append([])
     array_matt = np.array(matt[:,j])
     for i,row in enumerate(array_matt):
-        for element in row:
+	for element in row:
 	    data_2d_list[j].append(int64(element*100000000))
+	    summer += data_2d_list[j][i]
+    average = summer/len(data_2d_list[j])
+    for i,row in enumerate(data_2d_list[j]):
+	data_2d_list[j][i] -= average
     fft_2d_list.append([])
     fft_temp_list = fft(data_2d_list[j])
     for i,element in enumerate(fft_temp_list):
-        fft_2d_list[j].append(element)
-    if j != 0:
+	fft_2d_list[j].append(element)
+    #if j != 0:
 	#plt.plot(data_2d_list[j], label = str(j))
 	#plt.semilogy(wf, 2.0/num_samples * np.abs(fft_2d_list[j][0:num_samples/2]), label = str(j))
-    #if j in [1,2]:
-	plt.plot(data_2d_list[j], label = str(j))
-	#plt.semilogy(wf, 2.0/num_samples * np.abs(fft_2d_list[j][0:num_samples/2]), label = str(j))
+    if j in [1,2]:
+	##plt.plot(data_2d_list[j], label = str(j))
+	plt.semilogy(wf, 2.0/num_samples * np.abs(fft_2d_list[j][0:num_samples/2]), label = str(j))
 	#for i,sample in enumerate(data_2d_list[j]):
 	    #data_2d_list[j][i] = data_2d_list[j][i]*100000000
 	filtered_snippet = ellip_bandpass_filter(data_2d_list[j])
-	#filtered_snippet = FIR_bandpass_filter(data_2d_list[j], 0.1, 0.2)
-	#filtered_snippet = butter_lowpass_filter(data_2d_list[j], 0.3, 2)
-	fft_filtered_snippet = fft(filtered_snippet)
+	fft_filtered_data = fft(filtered_snippet)
 	#plt.plot(filtered_snippet)
-	#plt.semilogy(wf, 2.0/num_samples * np.abs(fft_filtered_snippet[0:num_samples/2]), label = str(j))
+	plt.semilogy(wf, 2.0/num_samples * np.abs(fft_filtered_data[0:num_samples/2]), label = str(j))
+
 
 plt.show()
-
-
 
