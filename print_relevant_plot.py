@@ -88,18 +88,20 @@ def ellip_bandpass_filter(data):
     print type(data[1])
     bgain = 100000000
     again = 100000000
-    lowcut = 2000.0
+    #lowcut = 2000.0
+    #highcut = 2300.0
+    lowcut = 1000.0
     highcut = 2300.0
-    #lowcut = 370.0
-    #highcut = 670.0
-    passband = [lowcut/8000, highcut/8000]
-    stopband = [lowcut*0.8/8000, highcut*1.2/8000]
+    passband = [lowcut/4000, highcut/4000]
+    stopband = [lowcut*0.8/4000, highcut*1.2/4000]
+    #passband = [lowcut*2/45714, highcut*2/45714]
+    #stopband = [lowcut*2*0.6/45714, highcut*2*1.4/45714]
     print 'passband'
     print passband
     print 'stopband'
     print stopband
     #b,a = iirdesign(wp = [0.2, 0.225], ws= [0.19, 0.23], gstop= 50, gpass=6, ftype='ellip') # 8000 hz version
-    b,a = iirdesign(wp = passband, ws= stopband, gstop= 50, gpass=6, ftype='ellip') # 8000 hz version
+    b,a = iirdesign(wp = passband, ws= stopband, gstop= 40, gpass=6, ftype='ellip') # 8000 hz version
     #b,a = iirdesign(wp = 0.25, ws= 0.30, gstop= 50, gpass=6, ftype='ellip') # 8000 hz version
     #b,a = iirdesign(wp = 0.046, ws= 0.055, gstop= 50, gpass=6, ftype='ellip') # 44100 hz version
     #b,a = iirdesign(wp = 0.033, ws= 0.041, gstop= 50, gpass=6, ftype='ellip') # 44100 hz version
@@ -197,7 +199,7 @@ for j in range(0,num_columns,1):
 	#filtered_snippet = butter_lowpass_filter(data_2d_list[j], 0.3, 2)
 	fft_filtered_snippet = fft(filtered_snippet)
 	#plt.plot(filtered_snippet)
-        plt.semilogy(wf, 2.0/num_samples * np.abs(fft_filtered_snippet[0:num_samples/2]), label = str(j))
+        #plt.semilogy(wf, 2.0/num_samples * np.abs(fft_filtered_snippet[0:num_samples/2]), label = str(j))
 
 plt.show()
 
