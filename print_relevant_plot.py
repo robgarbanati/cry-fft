@@ -8,35 +8,6 @@ from pylab import *
 import scipy.signal as signal
 from scipy.fftpack import fft, ifft
 
-def FIR_bandpass_filter(data, lowcut, highcut):
-    d = initialize_FIR_BP_filter(lowcut)
-    print 'd'
-    print d
-    y = scipy.signal.convolve(data, d)
-    #print 'FIRy'
-    #print y
-    return y
-
-def initialize_FIR_BP_filter(lowcut):
-    n = 1280
-    #Lowpass filter
-    a = signal.firwin(n, cutoff = lowcut, window = ('kaiser', 1.0))
-    for i,number in enumerate(a):
-	if abs(number) < 1e-15:
-	    a[i] = 0
-
-    ##Highpass filter with spectral inversion
-    #b = - signal.firwin(n, cutoff = 0.225, window = ('kaiser', 1.0)); b[n/2] = b[n/2] + 1
-    #for i,number in enumerate(b):
-	#if abs(number) < 1e-15:
-	    #b[i] = 0
-
-    #FIR_filt = - (a+b); FIR_filt[n/2] = FIR_filt[n/2] + 1
-    #print 'FIR_filt'
-    #print FIR_filt
-    #return FIR_filt
-    return a
-
 def robs_lfilter(b, a, x):
     max_asum = 0
     max_bsum = 0
@@ -78,18 +49,11 @@ def robs_lfilter(b, a, x):
 #a[0]*y[n] = b[0]*x[n] + b[1]*x[n-1] + ... + b[nb]*x[n-nb]
                         #- a[1]*y[n-1] - ... - a[na]*y[n-na]
 
-def makegraph(data, filename):
-    plt.clf()
-    plt.plot(data)
-    plt.savefig(filename)
-
 def ellip_bandpass_filter(data):
     #print data
     print type(data[1])
     bgain = 100000000
     again = 100000000
-    #lowcut = 2000.0
-    #highcut = 2300.0
     lowcut = 1000.0
     highcut = 2300.0
     passband = [lowcut/4000, highcut/4000]
@@ -100,12 +64,7 @@ def ellip_bandpass_filter(data):
     print passband
     print 'stopband'
     print stopband
-    #b,a = iirdesign(wp = [0.2, 0.225], ws= [0.19, 0.23], gstop= 50, gpass=6, ftype='ellip') # 8000 hz version
-    b,a = iirdesign(wp = passband, ws= stopband, gstop= 40, gpass=6, ftype='ellip') # 8000 hz version
-    #b,a = iirdesign(wp = 0.25, ws= 0.30, gstop= 50, gpass=6, ftype='ellip') # 8000 hz version
-    #b,a = iirdesign(wp = 0.046, ws= 0.055, gstop= 50, gpass=6, ftype='ellip') # 44100 hz version
-    #b,a = iirdesign(wp = 0.033, ws= 0.041, gstop= 50, gpass=6, ftype='ellip') # 44100 hz version
-    #b,a = iirdesign(wp = [0.61, 0.67], ws= [0.63, 0.65], gstop= 50, gpass=6, ftype='ellip') # notch
+    b,a = iirdesign(wp = passband, ws= stopband, gstop= 50, gpass=6, ftype='ellip') # 8000 hz version
     for i,number in enumerate(b):
 	if abs(number) < 1e-15:
 	    b[i] = 0
@@ -166,7 +125,7 @@ array_matt1 = np.array(matt[:,1])
 data_2d_list = []
 fft_2d_list = []
 
-num_columns = 3
+num_columns = 2
 
 num_samples = len(array_matt1)
 
@@ -197,9 +156,9 @@ for j in range(0,num_columns,1):
 	filtered_snippet = ellip_bandpass_filter(data_2d_list[j])
 	#filtered_snippet = FIR_bandpass_filter(data_2d_list[j], 0.1, 0.2)
 	#filtered_snippet = butter_lowpass_filter(data_2d_list[j], 0.3, 2)
-	fft_filtered_snippet = fft(filtered_snippet)
-	#plt.plot(filtered_snippet)
-        #plt.semilogy(wf, 2.0/num_samples * np.abs(fft_filtered_snippet[0:num_samples/2]), label = str(j))
+        fft_filtered_snippet = fft(filtered_snippet)
+        #plt.plot(filtered_snippet)
+        plt.semilogy(wf, 2.0/num_samples * np.abs(fft_filtered_snippet[0:num_samples/2]), label = str(j))
 
 plt.show()
 
