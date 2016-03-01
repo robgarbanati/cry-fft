@@ -138,7 +138,7 @@ def ellip_bandpass_filter(data):
 ############
 
 # Both files are legitimate.
-data = np.genfromtxt('workdocuments/data.txt', delimiter=', ', names=True, skiprows=5)
+data = np.genfromtxt('data2.txt', delimiter=', ', names=True, skiprows=5)
 #data = np.genfromtxt('data.txt', delimiter=', ', names=True, skiprows=5)
 
 # Convert the data into a numpy matrix
